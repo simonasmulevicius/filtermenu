@@ -81,15 +81,22 @@ app.post('/fileuploaded', (req, res) => {
                 }
                 console.log(phoneNumberRows);
 
-                //creates the csv or xlsx string to write it to a file
+                //create a set of good phone numbers
                 var writeStr = "";
+
+                let phoneData = [];
+
                 let errorsFound = '<ol>';
+                console.log("List of parsed phone numbers");
                 for (var i = 0; i < phoneNumberRows.length; i++) {
                     if (phoneNumberRows[i].length >= 2) {
                         if (!unWantedPhoneNumbers.includes(phoneNumberRows[i][1])) {
-                            let text = phoneNumberRows[i][0] + ";" + formatting.transformName(phoneNumberRows[i][0]) + ";" + phoneNumberRows[i][1];
-                            writeStr += text + "\n";
-                            console.log("CORRECT: " + text);
+                            let initialName = phoneNumberRows[i][0];
+                            let transformedName = formatting.transformName(phoneNumberRows[i][0]);
+                            let phoneNumber = phoneNumberRows[i][1];
+                            let newGoodClient = [initialName, transformedName, phoneNumber];
+                            phoneData.push(newGoodClient);
+                            //console.log("CORRECT: " + text); 
                         } else {
                             //Unwanted phone number is detected
                             let text = phoneNumberRows[i][0] + ', ' + phoneNumberRows[i][1];
@@ -98,6 +105,7 @@ app.post('/fileuploaded', (req, res) => {
                         }
                     }
                 }
+                console.log("------------------");
                 errorsFound += '</ol>';
 
                 // if (errorsFound.length > 0) {
@@ -106,15 +114,14 @@ app.post('/fileuploaded', (req, res) => {
                 //     res.write('<p> No errors were found </p>');
                 // }
 
-                //writes to a file, but you will presumably send the csv as a      
-                //response instead
-                var fileName = timePrefix + "sortedClients.csv";
-                var filePath = __dirname + "\\sortedContacts\\" + fileName;
 
-                fs.writeFile(filePath, writeStr, function(err) {
+                var fileName = timePrefix + "sortedClients.xlsx";
+                var filePath = __dirname + "\\sortedContacts\\" + fileName;
+                let buffer = xlsx.build([{ name: "Sorted_Clients_Sheet", data: phoneData }]);
+
+                fs.writeFile(filePath, buffer, 'utf8', function(err) {
                     if (err) console.log(err);
-                    console.log(writeStr);
-                    console.log("sortedClients.csv was saved in the current directory!");
+                    console.log("sortedClients.xlsx was saved in the current directory!");
                     return res.download(filePath, fileName);
                 });
 
@@ -130,4 +137,4 @@ app.use((req, res, next) => {
     res.status(404).render('404');
 });
 
-app.listen(80);
+app.listen(3000);
