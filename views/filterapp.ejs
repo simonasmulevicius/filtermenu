@@ -1,31 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Client Filter</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="css/style.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="application-page">
-            <form action="fileuploaded" method="post" enctype="multipart/form-data">
-                <div class="input-section">
-                    <img src="images/Instruction_clientsFile.png" alt="1st column MUST be client credentials and 2nd column must be phone numbers"> <br>
-                    <label for="fileId">1. Choose clients to filter (.xls or .xlsx)</label> <br>
-                    <input type="file" name="clientsfile" id="clientsfile" accept=".xls,.xlsx">
-                </div>
 
-                <div class="input-section">
-                    <img src="images/Instruction_unwantedPhoneNumbers.png" alt="1st column MUST be unwanted phone numbers"> <br>
-                    <label for="fileId">2. Choose unwanted phone numbers (.xls or .xlsx)</label> <br>
-                    <input type="file" name="unwantedclientsfile" id="unwantedclientsfile" accept=".xls,.xlsx">
-                </div>
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/style.css" rel="stylesheet">
+    <%- include head_fasterliqIcons.ejs %>
+</head>
 
-                <div class="input-section">
-                    <label for="submit">3. Click "Filter" and get a filtered file </label> <br>
-                    <input type="submit" value="Filter and Download">
-                </div>
-            </form>
-        </div>
-    </body>
+<body>
+    <div class="application-page">
+        <form action="filterapp" method="post" enctype="multipart/form-data">
+            <% if (!firstTime) { %>
+                <% if (foundErrors) { %>
+                    <div class="response-section red-border">
+                        <h3>Detected phone numbers</h3>
+                        <% for (var i = 0, len = responseMessage.length; i < len; i++) {%>
+                            <li>
+                                <%= responseMessage[i]; %>
+                            </li>
+                            <%}%>
+                    </div>
+                    <% } else { %>
+                        <div class="response-section green-border">
+                            <h1>No unwanted phone numbers have been detected</h1>
+                        </div>
+                        <% } %>
+                            <%}%>
+                                <div class="input-section">
+                                    <img src="images/Instruction_clientsFile.png" alt="1st column MUST be client credentials and 2nd column must be phone numbers"> <br>
+                                    <label for="fileId">1. Choose clients to filter (.xls or .xlsx)</label> <br>
+                                    <input type="file" name="clientsfile" id="clientsfile" accept=".xls,.xlsx">
+                                </div>
+
+                                <div class="input-section">
+                                    <img src="images/Instruction_unwantedPhoneNumbers.png" alt="1st column MUST be unwanted phone numbers"> <br>
+                                    <label for="fileId">2. Choose unwanted phone numbers (.xls or .xlsx)</label> <br>
+                                    <input type="file" name="unwantedclientsfile" id="unwantedclientsfile" accept=".xls,.xlsx">
+                                </div>
+
+                                <div class="input-section">
+                                    <label for="submit">3. Click "Filter" and get a filtered file </label> <br>
+                                    <input type="submit" value="Filter and Download">
+                                </div>
+        </form>
+    </div>
+</body>
+
 </html>
